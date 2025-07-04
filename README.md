@@ -5,22 +5,20 @@ The library supports anonymous authentication, that can be then used to create d
 It is using the REST APIs of the Firebase.Authentication and Cloud.Firestore functions.
 It is also using the Godot FileAccess/DirAccess classes to store the authentication data in a local encrypted file.
 
-
-
 #### Setup
-
 Download the repository and copy into your Godot project.
 
 Somewhere in your code initialize the Firebase logic like this:
 ```
-var auth = new Firebase.Auth(<your\_api\_key>);
+var auth = new Firebase.Auth(<your_api_key>);
 auth.LoggedIn += (s, e) =>
 {
-	var firestore = new Firebase.Firestore(<your\_project\_id>, e.IdToken);
-	firestore.CreateDocument(<your\_collection\_id>, e.UserId, new FirestoreDocument(new Dictionary<string, object>() {
-		{ "String value", new StringFirestoreValue("Bear") },
-		{ "Boolean value", new BooleanFirestoreValue(true) },
-		{ "Double value", new DoubleFirestoreValue(2.5) }
+	var firestore = new Firebase.Firestore(<your_project_id>, e.IdToken);
+	firestore.CreateDocument(<your_collection_id>, e.UserId,
+		new FirestoreDocument(new Dictionary<string, object>() {
+			{ "String value", new StringFirestoreValue("Bear") },
+			{ "Boolean value", new BooleanFirestoreValue(true) },
+			{ "Double value", new DoubleFirestoreValue(2.5) }
 	}));
 };
 auth.LoginAnonymously();
@@ -29,8 +27,8 @@ auth.LoginAnonymously();
 
 Using Firebase console, change the Cloud Firestore rules by adding the following entry:
 ```
-match /<your\_collection\_id>/{uid} {
-     allow read, write: if request.auth != null \&\& request.auth.uid == uid;
+match /<your_collection_id>/{uid} {
+     allow read, write: if request.auth != null && request.auth.uid == uid;
    }
 ```
 

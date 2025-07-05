@@ -24,27 +24,6 @@ namespace Firebase
 		/// <param name="Name">name of the document, leave null when creating new document</param>
 		/// <param name="CreateTime">timestamp of when the document was created</param>
 		/// <param name="UpdateTime">timestamp of when the document was last updated</param>
-		public record class FirestoreDocument(
-			[property:JsonPropertyName("fields")]
-			Dictionary<string, object> Fields,
-			[property:JsonPropertyName("name")]
-			[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-			string Name = null,
-			[property:JsonPropertyName("createTime")]
-			[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-			string CreateTime = null,
-			[property:JsonPropertyName("updateTime")]
-			[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-			string UpdateTime = null);
-
-		public record class StringFirestoreValue([property:JsonPropertyName("stringValue")]
-			string value);
-		public record class IntegerFirestoreValue([property:JsonPropertyName("integerValue")]
-			string value);
-		public record class DoubleFirestoreValue([property:JsonPropertyName("doubleValue")]
-			double value);
-		public record class BooleanFirestoreValue([property:JsonPropertyName("booleanValue")]
-			bool value);
 
 		/// <summary>
 		/// Create a new instance to interact with Firestore.

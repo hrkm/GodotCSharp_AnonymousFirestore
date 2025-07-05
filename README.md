@@ -18,7 +18,19 @@ auth.LoggedIn += (s, e) =>
 		new FirestoreDocument(new Dictionary<string, object>() {
 			{ "String value", new StringFirestoreValue("Bear") },
 			{ "Boolean value", new BooleanFirestoreValue(true) },
-			{ "Double value", new DoubleFirestoreValue(2.5) }
+			{ "Double value", new DoubleFirestoreValue(2.5) },
+			{ "Array", new ArrayFirestoreValue(
+				new ArrayValuesFirestoreValue(new List<object>()
+				{
+					new StringFirestoreValue("Value 1"),
+					new DoubleFirestoreValue(2)
+				}))},
+			{ "Map", new MapFirestoreValue(
+				new MapFieldsFirestoreValue(new Dictionary<string, object>() {
+					{ "Random", new StringFirestoreValue("Bear") },
+					{ "Bool", new BooleanFirestoreValue(true) },
+					{ "Double", new DoubleFirestoreValue(2.5) }
+				}))},
 	}));
 };
 auth.LoginAnonymously();
@@ -46,7 +58,7 @@ Since you are providing the data in FirestoreDocument, it is your responsibility
 
 #### What are the future plans?
 
-I will be adding a bit better support to the FirestoreDocument, so that you could define more robust structures like maps. There is also no error handling right now (it will just throw exception) - I might add a wrapper around it and include events to listen to in case a failure occurs.
+There should be a better way of doing the JSON formatted classes for easier data manipulation than what I have here. There is also no error handling right now (it will just throw exception) - I might add a wrapper around it and include events to listen to in case a failure occurs.
 
 #### This is awesome! How can I support you?
 

@@ -9,7 +9,7 @@ namespace Firebase
 {
 	public record class FirestoreDocument(
 			[property:JsonPropertyName("fields")]
-			Dictionary<string, object> Fields,
+			Dictionary<string, FirestoreValue> Fields,
 			[property:JsonPropertyName("name")]
 			[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 			string Name = null,
@@ -20,21 +20,39 @@ namespace Firebase
 			[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 			string UpdateTime = null);
 
-	public record class StringFirestoreValue([property:JsonPropertyName("stringValue")]
-			string value);
-	public record class IntegerFirestoreValue([property:JsonPropertyName("integerValue")]
-			string value);
-	public record class DoubleFirestoreValue([property:JsonPropertyName("doubleValue")]
-			double value);
-	public record class BooleanFirestoreValue([property:JsonPropertyName("booleanValue")]
-			bool value);
-	public record class ArrayFirestoreValue([property:JsonPropertyName("arrayValue")]
-			ArrayValuesFirestoreValue value);
+	public record class FirestoreValue(
+		[property:JsonPropertyName("stringValue")]
+		[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		string StringValue,
+		[property:JsonPropertyName("integerValue")]
+		[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		string IntegerValue,
+		[property:JsonPropertyName("doubleValue")]
+		[property:JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		double? DoubleValue,
+		[property:JsonPropertyName("booleanValue")]
+		[property : JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] 
+		bool? BooleanValue,
+		[property:JsonPropertyName("arrayValue")]
+		[property : JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		ArrayValuesFirestoreValue ArrayValue,
+		[property:JsonPropertyName("mapValue")]
+		[property : JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+		MapFieldsFirestoreValue MapValue
+		)
+	{
+		public FirestoreValue() : this(null, null, null, null, null, null) { }
+		public FirestoreValue(string value) : this(value, null, null, null, null, null) { }
+		public FirestoreValue(int value) : this(null, value.ToString(), null, null, null, null) { }
+		public FirestoreValue(double value) : this(null, null, value, null, null, null) { }
+		public FirestoreValue(bool value) : this(null, null, null, value, null, null) { }
+		public FirestoreValue(ArrayValuesFirestoreValue value) : this(null, null, null, null, value, null) { }
+		public FirestoreValue(MapFieldsFirestoreValue value) : this(null, null, null, null, null, value) { }
+	}
+
 	public record class ArrayValuesFirestoreValue([property:JsonPropertyName("values")]
-			List<object> values);
-	public record class MapFirestoreValue([property:JsonPropertyName("mapValue")]
-			MapFieldsFirestoreValue value);
+			List<FirestoreValue> values);
 	public record class MapFieldsFirestoreValue(
 		[property:JsonPropertyName("fields")]
-			Dictionary<string, object> Fields);
+			Dictionary<string, FirestoreValue> Fields);
 }

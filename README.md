@@ -15,21 +15,21 @@ auth.LoggedIn += (s, e) =>
 {
 	var firestore = new Firebase.Firestore(<your_project_id>, e.IdToken);
 	firestore.CreateDocument(<your_collection_id>, e.UserId,
-		new FirestoreDocument(new Dictionary<string, object>() {
-			{ "String value", new StringFirestoreValue("Bear") },
-			{ "Boolean value", new BooleanFirestoreValue(true) },
-			{ "Double value", new DoubleFirestoreValue(2.5) },
-			{ "Array", new ArrayFirestoreValue(
-				new ArrayValuesFirestoreValue(new List<object>()
+		new FirestoreDocument(new Dictionary<string, FirestoreValue>() {
+			{ "String value", new FirestoreValue("Bear") },
+			{ "Boolean value", new FirestoreValue(true) },
+			{ "Double value", new FirestoreValue(2.5) },
+			{ "Array", new FirestoreValue(
+				new ArrayValuesFirestoreValue(new List<FirestoreValue>()
 				{
-					new StringFirestoreValue("Value 1"),
-					new DoubleFirestoreValue(2)
+					new FirestoreValue("Value 1"),
+					new FirestoreValue(2)
 				}))},
-			{ "Map", new MapFirestoreValue(
-				new MapFieldsFirestoreValue(new Dictionary<string, object>() {
-					{ "Random", new StringFirestoreValue("Bear") },
-					{ "Bool", new BooleanFirestoreValue(true) },
-					{ "Double", new DoubleFirestoreValue(2.5) }
+			{ "Map", new FirestoreValue(
+				new MapFieldsFirestoreValue(new Dictionary<string, FirestoreValue>() {
+					{ "Random", new FirestoreValue("Bear") },
+					{ "Bool", new FirestoreValue(true) },
+					{ "Double", new FirestoreValue(2.5) }
 				}))},
 	}));
 };

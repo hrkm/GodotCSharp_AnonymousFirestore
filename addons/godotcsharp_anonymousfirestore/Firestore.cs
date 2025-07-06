@@ -47,12 +47,11 @@ namespace Firebase
 		/// Create a new document named with the user id under the given collection. If the collection does not exist, Firebase will create it.
 		/// </summary>
 		/// <param name="collectionId">name of the collection to store the document under</param>
-		/// <param name="userId">user id, from <see cref="Firebase.Auth.LoginResponse.UserId"/></param>
 		/// <param name="document">contents of the document</param>
-		public async void CreateDocument(string collectionId, string userId, FirestoreDocument document, string documentId = null)
+		public async void CreateDocument(string collectionId, FirestoreDocument document, string documentId)
 		{
 			using StringContent content = new(JsonSerializer.Serialize(document));
-			using var response = await _documentsClient.PostAsync(_projectPart + DOCUMENTS_URL + collectionId + DOCUMENT_ID_QUERY + (documentId != null ? documentId : userId), content);
+			using var response = await _documentsClient.PostAsync(_projectPart + DOCUMENTS_URL + collectionId + DOCUMENT_ID_QUERY + documentId, content);
 			response.EnsureSuccessStatusCode();
 
 			var responseContent = await response.Content.ReadFromJsonAsync<FirestoreDocument>();
@@ -77,7 +76,6 @@ namespace Firebase
 			var queryParams = String.Join("&" + UPDATE_MASK_QUERY, updateMask.Split(","));
 			using StringContent content = new(JsonSerializer.Serialize(document));
 			using var response = await _documentsClient.PatchAsync(_projectPart + DOCUMENTS_URL + documentPath + "?" + UPDATE_MASK_QUERY + queryParams, content);
-			Godot.GD.Print(await response.Content.ReadAsStringAsync());
 			response.EnsureSuccessStatusCode();
 
 			var responseContent = await response.Content.ReadFromJsonAsync<FirestoreDocument>();

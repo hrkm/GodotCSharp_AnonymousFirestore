@@ -47,10 +47,10 @@ namespace Firebase
 		/// <param name="collectionId">name of the collection to store the document under</param>
 		/// <param name="userId">user id, from <see cref="Firebase.Auth.LoginResponse.UserId"/></param>
 		/// <param name="document">contents of the document</param>
-		public async void CreateDocument(string collectionId, string userId, FirestoreDocument document)
+		public async void CreateDocument(string collectionId, string userId, FirestoreDocument document, string documentId = null)
 		{
 			using StringContent content = new(JsonSerializer.Serialize(document));
-			using var response = await _documentsClient.PostAsync(_projectPart + DOCUMENTS_URL + collectionId + DOCUMENT_ID_QUERY + userId, content);
+			using var response = await _documentsClient.PostAsync(_projectPart + DOCUMENTS_URL + collectionId + DOCUMENT_ID_QUERY + (documentId != null ? documentId : userId), content);
 			response.EnsureSuccessStatusCode();
 
 			var responseContent = await response.Content.ReadFromJsonAsync<FirestoreDocument>();

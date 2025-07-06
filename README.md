@@ -47,6 +47,13 @@ match /<your_collection_id>/{uid} {
 
 This will only allow a given authenticated user the ability to write a document with the title matching their user id. That way you are guaranteed to not access other data in the Firestore, and if anyone decides to spam your database they can only access the data they create with those anonymous accounts.
 
+You can also allow subcollections within the same user document by adding a rule like this, so that users can generate multiple documents within that subcollection:
+```
+match /<your_collection_id>/{uid}/<your_subcollection_id>/{document=**} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+```
+
 Please note that you can set a quota of how many users can be created from a given IP address in Firebase.Authentication Settings in the Firebase console.
 
 #### Using Google Analytics

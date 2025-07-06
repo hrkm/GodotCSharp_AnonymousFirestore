@@ -109,7 +109,7 @@ namespace Firebase
 			response.EnsureSuccessStatusCode();
 
 			var responseContent = await response.Content.ReadFromJsonAsync<TokenRefreshResponse>();
-			_data = new LoginResponse("", responseContent.AccessToken, responseContent.RefreshToken, responseContent.ExpiresIn, responseContent.UserId);
+			_data = new LoginResponse("", responseContent.IdToken, responseContent.RefreshToken, responseContent.ExpiresIn, responseContent.UserId);
 			if (saveOnSuccess)
 			{
 				SaveAuth(_data);
@@ -122,7 +122,7 @@ namespace Firebase
 		/// </summary>
 		private void SaveAuth(LoginResponse data)
 		{
-			var file = Godot.FileAccess.OpenEncryptedWithPass(USER_AUTH_FILENAME, Godot.FileAccess.ModeFlags.Write, _apiKey);
+			using var file = Godot.FileAccess.OpenEncryptedWithPass(USER_AUTH_FILENAME, Godot.FileAccess.ModeFlags.Write, _apiKey);
 			file.StoreLine(JsonSerializer.Serialize(data));
 		}
 
@@ -133,7 +133,16 @@ namespace Firebase
 		{
 			var file = Godot.FileAccess.OpenEncryptedWithPass(USER_AUTH_FILENAME, Godot.FileAccess.ModeFlags.Read, _apiKey);
 			var data = JsonSerializer.Deserialize<LoginResponse>(file.GetLine());
+			file.Dispose();
 			ManualTokenRefresh(data.RefreshToken, true);
+		}
+
+		public bool AuthExists
+		{
+			get
+			{
+				return Godot.FileAccess.FileExists(USER_AUTH_FILENAME);
+			}
 		}
 
 		private void RemoveAuth()

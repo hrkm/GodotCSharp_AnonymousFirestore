@@ -1,20 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace Firebase
 {
 	public class Firestore
 	{
 		public event EventHandler<FirestoreDocument> DocumentCreated;
+		public event EventHandler<FirestoreDocument> DocumentFetched;
+		public event EventHandler<FirestoreDocument> DocumentPatched;
 
 		private const string BASE_URL = "https://firestore.googleapis.com";
 		private const string DOCUMENTS_URL = "/databases/(default)/documents/"; // to be appended with collection ID
 		private const string DOCUMENT_ID_QUERY = "?documentId="; // to be appended with user ID
+		private const string UPDATE_MASK_QUERY = "updateMask.fieldPaths="; // to be appended with update mask
 		private string _projectPart = "/v1/projects/"; // to be appended with project ID
 
 		/// <summary>
@@ -55,6 +57,31 @@ namespace Firebase
 
 			var responseContent = await response.Content.ReadFromJsonAsync<FirestoreDocument>();
 			DocumentCreated?.Invoke(this, responseContent);
+		}
+
+		public async Task<FirestoreDocument> GetDocument(string documentPath)
+		{
+			using var response = await _documentsClient.GetAsync(_projectPart + DOCUMENTS_URL + documentPath);
+			if (response.StatusCode == System.Net.HttpStatusCode.OK)
+			{
+				var responseContent = await response.Content.ReadFromJsonAsync<FirestoreDocument>();
+				DocumentFetched?.Invoke(this, responseContent);
+				return responseContent;
+			}
+			// for whatever reason the document fetch failed
+			return null;
+		}
+
+		public async void PatchDocument(string documentPath, FirestoreDocument document, string updateMask)
+		{
+			var queryParams = String.Join("&" + UPDATE_MASK_QUERY, updateMask.Split(","));
+			using StringContent content = new(JsonSerializer.Serialize(document));
+			using var response = await _documentsClient.PatchAsync(_projectPart + DOCUMENTS_URL + documentPath + "?" + UPDATE_MASK_QUERY + queryParams, content);
+			Godot.GD.Print(await response.Content.ReadAsStringAsync());
+			response.EnsureSuccessStatusCode();
+
+			var responseContent = await response.Content.ReadFromJsonAsync<FirestoreDocument>();
+			DocumentPatched?.Invoke(this, responseContent);
 		}
 	}
 }
